@@ -7,16 +7,17 @@ app.get('/',(req,res)=>{
 })
 
 io.on('connect',(socket)=>{
-    console.log(socket.handshake.address)
+    console.log(socket.handshake.address+" 클라이언트 접속")
     socket.on('disconnect',()=>{
-        console.log('클라 접속 종료')
+        console.log(socket.handshake.address+' 클라이언트 접속 종료')
     })
     socket.on('msg',(val)=>{
-        io.emit('msg',val)
+        socket.broadcast.emit('msg',val)
+        socket.emit('msgM',val)
     })
 })
 
-server.listen(80, function(){
+server.listen(3000, function(){
     console.log('Server is running...')
 })
 
