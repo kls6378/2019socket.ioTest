@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <script src="/socket.io/socket.io.js"></script>
+    <title>Document</title>
+</head>
+<body>
+    <h1>&lt;Test&gt;</h1>
+    <input type="text" id="msg">
+    <input type="submit" onclick="sendMsg()">
+    <!-- <div id="chat" style="width: 500px; height: 600px; border: 1px solid black;">
+        
+    </div> -->
+    <textarea id="chat" cols="30" rows="10"></textarea>
+    <script>
+        var socket = io()
+
+        socket.on('connect',()=>{
+            console.log('서버 접속')
+        })
+
+        socket.on('msg',(msg)=>{
+            var chat = document.getElementById('chat')
+            chat.value+=`${msg}\n`
+        })
+
+        function sendMsg(){
+            var msgSpace = document.getElementById('msg')
+            var msg = msgSpace.value
+            socket.emit('msg', msg)
+            msgSpace.value = ''
+        }
+    </script>
+</body>
+</html>
