@@ -1,10 +1,9 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <script src="/socket.io/socket.io.js"></script>
     <title>Document</title>
     <style>
@@ -15,18 +14,21 @@
             border-radius: 20px;
             background: #c9ffff;
         }
-        #msgOutput{
-            resize: none;
-            border: 0;
-            border-radius: 20px;
-            padding: 10px;
+        #msgOutputDiv{
+            width: 70vw;
+            height: 30vh;
+            line-height: 30px;
+            overflow-y: auto;
+            word-wrap: break-word;
         }
         #inputContainer{
             margin: 10px 0 0 0;
         }
         #msgInput{
             border: 2px solid black;
+            box-sizing: border-box;
             padding: 5px 0 5px 0;
+            width: 100%;
         }
         #submit{
             border: 0;
@@ -43,29 +45,37 @@
 <body>
     <h1>&lt;Test&gt;</h1>
     <div id="chat">
-        <textarea id="msgOutput" cols="30" rows="20" readonly="readonly"></textarea>
+        <div id="msgOutputDiv"></div>
         <div id="inputContainer">
             <input type="text" id="msgInput" onkeydown="checkEnter()" autofocus>
-            <input type="submit" id="submit" value="전송" onclick="sendMsg()">
+            <!-- <input type="submit" id="submit" value="전송" onclick="sendMsg()"> -->
         </div>
     </div>
     <script>
         var socket = io()
+        var msgOutputDiv = document.getElementById('msgOutputDiv')
+        var msgInput = document.getElementById('msgInput')        
 
         socket.on('connect', () => {
             console.log('서버 접속')
         })
 
         socket.on('msg', (msg) => {
-            var msgOutput = document.getElementById('msgOutput')
-            msgOutput.value += `낯선상대 : ${msg}\n\n`
-            msgOutput.scrollTop = msgOutput.scrollHeight
+            var message = document.createElement('div')
+            message.innerHTML = `낯선상대 : ${msg}`
+            message.style.padding = '5px'
+            msgOutputDiv.appendChild(message)
+            msgOutputDiv.scrollTop = msgOutputDiv.scrollHeight
         })
 
         socket.on('msgM', (msg) => {
-            var msgOutput = document.getElementById('msgOutput')
-            msgOutput.value += `당신 : ${msg}\n\n`
-            msgOutput.scrollTop = msgOutput.scrollHeight
+            var message = document.createElement('div')
+            message.innerHTML = `당신 : ${msg}`
+            message.style.color = 'blue'
+            message.style.padding = '5px'
+            msgOutputDiv.appendChild(message)
+            msgOutputDiv.scrollTop = msgOutputDiv.scrollHeight
+
         })
 
         function checkEnter() {
@@ -75,11 +85,10 @@
         }
 
         function sendMsg() {
-            var msgSpace = document.getElementById('msgInput')
-            var msg = msgSpace.value
+            var msg = msgInput.value
             if (msg) {
                 socket.emit('msg', msg)
-                msgSpace.value = ''
+                msgInput.value = ''
             }
         }
     </script>
